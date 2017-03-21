@@ -24,10 +24,11 @@ func main() {
 	channel, _ := conn.Channel()
 	defer channel.Close()
 
+	channel.Qos(1, 0, false)
 	messages, _ := channel.Consume(
 		*queueName,
 		"",    // consumer
-		true,  // auto-ack
+		false, // auto-ack
 		false, // exclusive
 		false, // no-local
 		false, // no-wait
@@ -40,6 +41,7 @@ func main() {
 		for d := range messages {
 			fmt.Printf("%s\n", d.Body)
 			time.Sleep(time.Duration(*sleep) * time.Second)
+			d.Ack(false)
 		}
 	}()
 
